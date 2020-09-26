@@ -1,0 +1,64 @@
+Smart Type Completion
+---------------------
+Ctrl + Shift + A            : Find Action
+Ctrl + Shift + Space        : Smart Type Completion [includes only those types that are applicable in the current context]
+Ctrl + Shift + Enter        : To generate the statement.
+Ctrl + Space                : Completion
+
+
+Expand and Shrink the code selection
+------------------------------------
+Ctrl + Shift + Right        : To move the caret to the next word and select everything in between.
+Ctrl + W                    : To extend the selection to the next code block until the entire file is select.
+Ctrl + Shift + W            : To shrink the selection until nothing is selected.
+Ctrl + Slash                : Comment and uncomment line. selected multiple line and it works the same.
+Ctrl + D                    : Duplicate the line.
+Ctrl + Y                    : Delete the line.
+
+Move Code line or block
+-----------------------
+Alt + Shift + Down          : To pull down the current line.
+Alt + Shift + Down          : To push Up the current line.
+Ctrl + Shift + Up           : Move the whole method Up.
+Ctrl + Shift + Down         : Move the whole method Down.
+Ctrl + NumPad -             : Collapse the code fragment.
+Ctrl + Shift + NumPad -     : Collapse all region in the file.
+Ctrl + NumPad +             : Expand the code fragment.
+Ctrl + Shift + NumPad +     : Expand all region in the file.
+
+Surround and unwrap
+-------------------
+Ctrl + Alt + T              : Surround the selected code fragment with source template code.
+Ctrl + Shift + Delete       : unsurrounds the selected code fragment.
+Ctrl + Shift + F7           : highlight all usage of the symbol at the caret within the file.
+
+Multiple Selection
+------------------
+Alt + J                     : Select the symbol. keep pressing to select next occurrance of this symbol.
+Alt + Shift + J             : Deselect the last occurrance.
+Ctrl + Alt + Shift + J      : Select all occurrance in the file. This helps replace/correct the word.
+
+
+Refactoring
+-----------
+Shift + F6                  : Rename
+Ctrl + Alt + V              : to extract a variable or field.
+Ctrl + Alt + M              : Extract Method
+Ctrl + Alt + C              : Select the Current selected expression into a constant.
+Ctrl + Alt + P              : Extract the selected expression into a parameter.
+
+Code Assistance/Formatting:
+---------------------------
+Ctrl + Alt + L              : Reformat the selected code. or reformat the whole source file when no line is selected.
+Ctrl + P                    : To change method signature. (shows parameter signature type for quick assistance.)
+Ctrl + Q                    : See documentation for the symbol at the caret.
+Ctrl + Shift + I            : To see the definition/code of the symbol/method at the caret.
+F2                          : To go to next highlighted error in the file.
+Ctrl + F1                   : to see the error description shown by F2.
+Alt + Enter                 : smart completion suggestion.
+F4                          : Jump to source. It takes you to the source file based on the word where caret it.
+Ctrl + B                    : To see implementation of a class/interface.
+Ctrl + F12                  : Shows overview of the file. Shows methods, constructors and instance variables of this file.
+
+
+
