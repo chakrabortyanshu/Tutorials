@@ -1,6 +1,7 @@
 Smart Type Completion
 ---------------------
 Ctrl + Shift + A            : Find Action
+Ctrl + N                      : Search Classes or search Anywhere
 Ctrl + Shift + Space        : Smart Type Completion [includes only those types that are applicable in the current context]
 Ctrl + Shift + Enter        : To generate the statement.
 Ctrl + Space                : Completion
@@ -8,6 +9,7 @@ Ctrl + Space                : Completion
 
 Expand and Shrink the code selection
 ------------------------------------
+Ctrl+Shift+left             : Move caret to previous word with selection.
 Ctrl + Shift + Right        : To move the caret to the next word and select everything in between.
 Ctrl + W                    : To extend the selection to the next code block until the entire file is select.
 Ctrl + Shift + W            : To shrink the selection until nothing is selected.
@@ -18,13 +20,20 @@ Ctrl + Y                    : Delete the line.
 Move Code line or block
 -----------------------
 Alt + Shift + Down          : To pull down the current line.
-Alt + Shift + Down          : To push Up the current line.
+Alt + Shift + Up            : To push Up the current line.
 Ctrl + Shift + Up           : Move the whole method Up.
 Ctrl + Shift + Down         : Move the whole method Down.
 Ctrl + NumPad -             : Collapse the code fragment.
 Ctrl + Shift + NumPad -     : Collapse all region in the file.
 Ctrl + NumPad +             : Expand the code fragment.
 Ctrl + Shift + NumPad +     : Expand all region in the file.
+Ctrl+B                      : Go to declaration             ========>
+Ctrl+Alt+B                  : Navigate To Implementation   ========>
+Ctrl+Alt+Left &                 
+Ctrl+Alt+Right              : Navigate back and forth between the last position.  ========>
+Ctrl+G                      : Go to Line.
+Ctrl+[                      : Jump to the start of the tag/block of the code.
+Ctrl+]                      : Jump to the end of the tag/block of the code.
 
 Surround and unwrap
 -------------------
@@ -41,11 +50,12 @@ Ctrl + Alt + Shift + J      : Select all occurrance in the file. This helps repl
 
 Refactoring
 -----------
-Shift + F6                  : Rename
+Shift + F6                  : Rename /Change Signature
 Ctrl + Alt + V              : to extract a variable or field.
 Ctrl + Alt + M              : Extract Method
 Ctrl + Alt + C              : Select the Current selected expression into a constant.
 Ctrl + Alt + P              : Extract the selected expression into a parameter.
+Alt+Shift+C                 : To quickly review recent changes to the Project.
 
 Code Assistance/Formatting:
 ---------------------------
@@ -58,7 +68,65 @@ Ctrl + F1                   : to see the error description shown by F2.
 Alt + Enter                 : smart completion suggestion.
 F4                          : Jump to source. It takes you to the source file based on the word where caret it.
 Ctrl + B                    : To see implementation of a class/interface.
+Ctrl+F7                     : Find usage.
+Alt+F7                      : Find Usages
+Ctrl+Shift+F7               : Remove Find usage highlighting. or use Escape.
 Ctrl + F12                  : Shows overview of the file. Shows methods, constructors and instance variables of this file.
+Ctrl+Alt+N                  : Inline methods. Delete the callable method and pull the implementation back.
+Ctrl+Shift+T                : To Navigate between Test and the main class.
+Ctrl+Shift+Alt+T            : Invoke refactoring
+                            : Refactor the element under the caret, for example, safe delete, copy, move, rename, and so on.
+Ctrl+Shift+F10              : Run Test method.
+Ctrl+/                      : Add/remove line or block comment
+Ctrl+Shift+/                : Comment out a line or block of code.
+Ctrl+Alt+Shift+Insert       : To create a scratch file. Scratch files are temporary files that let you experiment and prototype in the editor, 
+                              without creating any project files.
+Alt+Insert                  : Provides default option for creating desired option (ex:package, default methods, new Test class for the existing class)
+Alt+Shift+F                 : Lets you add project elements (files, folders, packages, instance, and class members) into a Favorites list Alt+2, 
+                              which also automatically adds your bookmarks and breakpoints.
+Alt+Home                    : Show Navigation Bar (Breadcrum)
+
+							
+Version Control System:
+-----------------------
+Ctrl+K                      : Commit everything to Git (git commit -m"")
+Version Control             : From the Menu VCS (Alt+S) > Create Version Control + Git
+
+Setups/Settings/Windows:
+------------------------
+Ctrl Ctrl                   : Run Anything
+Ctrl+E                      : View recent files      =====>
+Ctrl+Shift+E                : To get a list of recently viewed or changed code fragments.  ====>
+Ctrl+Shift+Alt+S            : Project Structure.
+Ctrl+Tab                    : To switch between opened files and tool windows. For navigation, press and hold Ctrl and use the 
+                              Up and Down arrow keys or Tab and Shift+Tab, and Alt.
+Ctrl+Shift+F12              : Hide All windows. 
+Ctrl+Alt+S                  : In the Settings/Preferences dialog , go to Editor | Live Templates.
+Ctrl+F2                     : brings up the list of processes we can stop. We can press Ctrl+F2 second time to stop all processes. 
+Double Shift                : Search Everywhere
+                              Find anything related to IntelliJ IDEA or your project and open it, execute it, or jump to it.
+Shift+F2                    : Navigate between code issues
+                              Jump to the next or previous highlighted error.
+Ctrl+Shift+O                : Reload maven changes.
+Alt+1                       : Project Tool Window
+Alt+9                       : Git Window
+Esc                         : Focus on the Editor
 
 
+Remove Noises:
+--------------
+Ctrl+Shift+A and "Tabs"     to disable tabs Settings>Editor>General>Editor Tabs
+Ctrl+Shift+A and "Navigation"     to disable navigation bar View>Appearance>Navigation
+Ctrl+Shift+A and "Breadcrums"     to disable breadcrums View>Active Editor>Show Breadcrums
+
+
+To Show overloaded constructors:
+------------------------------- 
+    - Enable a hidden option. 
+    - Ctrl+Shift+A (Find Action) and type "Registry" to go to the Registry. 
+    - Here enable the "java.completion.show.constructors" option.
+
+
+https://github.com/JetBrains/intellij-samples
+Plugin: IDE Features Trainers
 
