@@ -1,0 +1,379 @@
+https://kafka.apache.org/downloads
+
+KAFKA:
+TOPICS: 
+	* A particular stream of data identified by its name.
+	* TOPICS are split in partitions. These partitions starts with numbers 0 till n.
+	* Each message within a partition gets an incremental id, called offset.
+	* Data is assigned randomly to a partition unless a key is provided.
+	
+
+Brokers:
+	* A Kafka cluster is composed of multiple brokers (servers)
+	* Each broker is a server.
+	* Each broker is identified with its IDS (integer)
+	* Each broker contain certain topic partitions.
+	* After connecting to any broker (called a bootstrap broker), you will be connected to the entire cluster.
+	* A good number to get started is 3 brokers, but some big clusters have over 100 brokers.
+	* Topic should have a replication factor >1 (usually between 2 and 3)
+	* AT any time only ONE broker can be a leader for a given partition.
+	* Only that leader can receive and serve data for a partition.
+	* The other brokers will synchronize the data.
+	* Therefore each partition has one leader and multiple ISR (in-sync replica).
+
+Producer:
+	* Producer writes data to topics (which is made of partitions)
+	* Producers automatically know to which broker and partition to write to
+	* In case of a Broker failures, Producers will automatically recover.
+	* Producer can choose to receive acknowledgement of data writes.
+		* ack=0: Producer won't wait for the acknowledgement (possible data loss)
+		* ack=1: Producer will wait for leader acknowledgement (limited data loss)
+		* ack=all: Leader + replicas acknowledgement (no data loss)
+
+Producers: Message Key
+	* Producers can choose to send a key with the message (string, number etc)
+	* If key=null, data is sent round robin (broker 101 then broker 102 then 103...)
+	* If a key is sent, then all messages for that key will always go to the same partition.
+	* A key is basically sent if you need message ordering for a specific field (ex:truck_id)  --->
+
+Consumers:
+	* Consumers will read data from a topic (identified by name)
+	* Consumers know which broker to read from.
+	* In case of broker failures, consumers know how to recover.
+	* Data is read in order WITHIN EACH PARTITIONS.
+	* Consumers can read data from multiple partitions in parallel.
+
+Consumer Groups:
+	* Consumers read data in consumer group (java application)
+	* Each consumer within a group reads from exclusive partitions.
+	* If you have more consumers than partitions, some consumers will be inactive.
+	* Consumers will automatically use a GroupCoordinator and a ConsumerCoordinator to assign a consumer to a partition.
+
+Consumer offsets:
+	* Kafka stores the offsets at which a consumer group has been reading.
+	* The offsets committed live in a Kafka topic named __consumer_offsets.
+	* When a consumer in a group has processed data received from Kafka, it should be committing the offsets.
+	* If a consumer dies, it will be able to read back from where it left off thanks to the committed consumer offsets!
+
+Delivery semantics for Consumers:
+	* Consumers choose when to commit offsets.
+	* There are 3 delivery semantics.
+		* At most once:
+			* offsets are commmitted as soon as the message is received.
+			* If the processing goes wrong, the message will be lost (it won't be read again).
+		* At least once (usually prefferred) (default):
+			* offsets are committed after the message is processed.
+			* If the processing goes wrong, the message will be read again.
+			* This can result in duplicate processing of messages. Make sure your processing is
+			  idempotent (i.e. processing again the messages won't impact your systems)
+		* Exactly once:
+			* Can be achieved for Kafka => Kafka workflows using Kafka Streams API.
+			* For Kafka => External System workflows, use an idempotent consumer.
+		Note: For most applications you should use "At least once" processing and ensure your transformations/processing are idempotent.
+
+Consumer Poll Behavior:
+	* Kafka consumer have a "poll" model, while many other messaging bus in enterprises have a "push" model.
+	* This allows consumer to control where in the log they want to consume, how fast, and gives them the ability to replay events.
+	Settings:-
+		* fetch.min.bytes (default 1) - One.
+			- Constrols how much data you want to pull at least on each requests.
+			- Helps improving throughput and decreasing request number.
+			- At the cost of latency.
+		* max.poll.records (default 500):
+			- Controls how many records to receive per poll request.
+			- Increase if your message are very small and have a lot of available RAM.
+			- It's good to monitor how many records are polled per request.
+		* max.partitions.fetch.bytes (default 1 MB)
+			- Maximum data returned by the broker per partition.
+			- If you read from 100 partitions, you'll need a lot of memory (RAM)
+		* fetch.max.bytes (default 50 MB)
+			- Maximum data retured for each fetch requests (covers multiple partitions)
+			- The consumer performs multiple fetch in parallel.
+		
+		Note: These are default values and not recommended to change unless your consumer maxes out on throughput already.
+	
+Consumer Offset Commits Strategies.
+	* There are two most common patterns for committing offsets in a consumer application.
+		* (Easy and default) enable.auto.commit=true & synchronous processing of batch.
+			- With auto-commit, offsets will be committed automatically for you at regular interval (auto.commit.interval.ms=5000 (i.e. 5 seconds) by default)
+			  everytime you call consumer.poll() as shown below.
+			- while(true){
+					List<Records> batch = consumer.poll(Duration.ofMillis(100));
+					doSomethingSynchronous(batch);
+			  }
+			- if you don't use synchronous processing, you will be in "at-most-once" behavior because offsets will be committed before your data is processed. 
+			
+		* (medium) enable.auto.commit=false & manual commit of offsets with synchronous processing of batches.
+			- while(true){
+					batch += consumer.poll(Duration.ofMillis(100));
+					if isReady(batch){
+						doSomethingSynchronous(batch);
+						consumer.commitSync();
+					}
+			  }
+			- You control when you commit offsets and what's the condition for committing them.
+			- Ex: When you accumulate records into a buffer and then flushing the buffer to a database and then committing the offset.
+			
+Consumer Offset Reset Behaviour:
+	* A consumer is expected to read from the log continuously.
+	* But if you application has a bug, your consumer can be down.
+	* If Kafka has a retention of 7 days, and your consumer is down for more than 7 days, the offset are "invalid"
+	* The behavior of the consumer is to then use:
+		- auto.offset.reset=latest: will read from the end of the log.
+		- auto.offset.reset=earliest: will read from the start of the log.
+		- auto.offset.reset=none: will throw exception if no offset is found.
+	* Additionally, consumer offsets can be lost:
+		- If a consumer hasn't read new data in 1 day (Kafka < 2.0)
+		- If a consumer hasn't read new data in 7 days (Kafka >= 2.0)
+	* This can be controlled by the broker setting "offset.retention.minutes"
+	* To replay data for the consumer group:
+		- Take all the consumers from the specific group down.
+		- Use "kafka-consumer-groups" command to set offset to what you want
+		- Restart consumers.
+	* Bottom line:
+		- Set proper data retention period & offset retention period.
+		- Ensure the auto offset reset behavior is the one you expect/ want.
+		- Use replay capability in case of unexpected behaviour.
+	
+Controlling Consumer Liveliness
+	* Consumers in a group talk to a Consumer Group Coordinator.
+	* To detect consumers that are "down", there is a "heartbeat" mechanism and a "poll" mechanism
+	* To avoid issues, consumers are encouraged to process data fast and poll often.
+	* Note: heartbeats and poll() are decoupled since Kafka 0.10.1
+	* Consumer Heartbeat Thread:
+		* "session.timeout.ms" (default 10 seconds):
+			- Heartbeats are periodically sent to the broker.
+			- If no heartbeat is sent during that period, the consumer is considered dead.
+			- Set even lower to faster consumer rebalance. (Only if necessary)
+		* "heartbeat-interval-ms" (default 3 seconds):
+			- How often to send heartbeats.
+			- Usually set to 1/3rd of "session.timeout.ms".
+			- Ex: if "session.timeout.ms" is 6 seconds then "heartbeat-interval-ms" is 2 seconds.
+		* Above two configurations are used to detect a  consumer application being down.
+	* Consumer Poll Thread
+		* "max.poll.interval.ms" (default 5 minutes):
+			- Maximum amount of time between two polls (i.e. method .poll()) calls before declaring the consumer dead.
+			- This is particularly relevant for Big Data frameworks like Spark in case the processing takes time.
+		* Take-away: This mechanism is used to detect a data processing issue with the consumer.
+	
+		
+
+
+Kafka Broker Discovery.
+	* Every Kafka broker is also called a "bootstrap server"
+	* That means that YOU ONLY NEED TO CONNEC TO ONE BROKER. and you will be connected to
+		the entire cluster.
+	* Each broker knows about all brokers, topics and partitions (metadata)
+
+Zookeeper:
+	* Zookeeper manages brokers (keeps a list of them)
+	* Zookeeper helps in performing leader election for partitions.
+	* Zookeeper sends notifications to Kafka in case of changes (ex: new topic,
+		broker dies, broker comes up, delete topics, etc..)
+	* KAFKA CAN'T WORK WITHOUT ZOOKEEPER.
+	* Zookeeper by design operates with an odd number of servers (3,5,7).
+	* Zookeeper has a leader (handle writes). the rest of the servers are followers (handle reads)
+	* Zookeeper doesn't store consumer offsets with Kafka > v0.10)
+
+Kafka Guarantees:
+	* Message are appended to a topic-partition in the order they are sent.
+	* Consumers read messages in the order stored in a topic-partition.
+	* With a replication factor of N, producers and consumers can tolerate up to N-1 brokers 	
+		being down.
+	* This is why a replication factor of 3 is a good idea.
+		* Allows for one broker to be taken down for maintenance.
+		* Allows for abother broker to be taken down unexpectedly.
+	* As long as the number of partitions remains constant for a topic (no new partitions), the 
+	  same key will always go to the same partition.
+	  
+
+CLI:
+	* Start Zookeeper (Keep it running)
+		$ bin/zookeeper-server-start.sh
+		$ bin/zookeeper-server-start config/zookeeper.properties
+		
+	* Start Kafka (Keep it running)
+		$ bin/kafka-server-start config/server.properties
+		
+	* Create Topics
+		$ kafka-topics
+		$ kafka-topics --zookeeper 127.0.0.1:2181 --topic first_topic --create --partitions 3 --replication-factor 1
+		$ kafka-topics --zookeeper 127.0.0.1:2181 --topic second_topic --create --partitions 6 --replication-factor 1
+		$ --  
+	
+	* List Topics
+		$ kafka-topics --zookeeper 127.0.0.1:2181 --list
+	
+	* Describe specific topic:
+		$ kafka-topics --zookeeper 127.0.0.1:2181 --topic first_topic --describe
+	
+	* Delete the topic:
+		$ kafka-topics --zookeeper 127.0.0.1:2181 --topic second_topic --delete
+			Note: Windows has a bug which crashes Kafka. Manually delete the folder from data/kafka.
+		
+	* Kafka Console Producer
+		$ kafka-console-producer --broker-list 127.0.0.1:9092 --topic first_topic
+			>Hello World!
+			>How are you
+		$ kafka-console-producer --broker-list 127.0.0.1:9092 --topic first_topic acks=all
+			>Hello World Again.
+			-- acks=0 
+				-- meaning no response is requested.
+				-- if the broker goes offline or an exception happens, we won't know and will lose data.
+				-- Useful for data where it's okay to potentially lose messages. Ex: Metrics Collection, Log Collection.
+			-- acks=1 
+				-- meaning leader acknowledgement.
+				-- Leader responses to the request, but replication is not a gurantee (happens in the background)
+				-- If an acknowledgement is not received, the producer may retry.
+				-- if the leader broker goes offline but the replicas haven't replicated the data yet, we have a data loss.
+			-- acks=all
+				-- Leader and all its replicas are requested for the acknowledgement.
+				-- The Leader broker receives the data and sends for replication. One the replication broker acknowledges, 
+				   then finally an acknowledgement it sent back to the Producer.
+				-- But adds a bit of latency because the leader broker waits for the response from the replicas before responding to the Producer.
+				-- This gurantees the data received.
+				-- this settings needs to be used in conjunction with min.insync.replicas
+				
+			-- min.insync.replicas=2
+				-- min.insync.replicas can be set at the broker or topic level (override)
+				-- Implies that at least two brokers that are ISR (including leader) must respond that they have the data. 
+				-- That means if you use replication.factor=3, min.insync.replicas=2, acks=all, you can only tolerate 1 broker going down, 
+				   otherwise the producer will receive an exception on send.
+				-- In case of retries, by default there is a chance that messages will be sent out of order (if a batch has failed to be sent)
+				-- If you rely on key-based ordering, that can be an issue.
+				-- For this, you can set the setting while controls how many produce requests can be made in parallel: max.in.flight.requests.per.connection
+						
+			-- max.in.flight.requests.per.connection
+			    -- Producer side configuration.
+				-- Default:5
+				-- Set it to 1 (one) if you need to ensure ordering (may impact throughput.)
+				-- In Kafka >= 1.0.0, there's a better solution.
+		-- Idempotent Producer.
+				-- Will keep retrying sending data to broker with a unique id.
+				-- The broker doesn't commit the duplicate id but still responds with acknowledgement.
+				-- this ensures uniqueness of the data at the broker side.
+				-- Idempotent producers are great to gurarantee a stable and safe pipeline.
+				-- They come with 
+					-- retries = Integer.MAX_VALUE (2^31-1 = 2147483647)
+					-- max.in.flight.requests=1 (Kafka>=0.11 & <1.1) or
+					-- max.in.flight.requests=5 (Kafka>=1.1 - higher performance)
+					-- acks=all
+				-- just set producerProps.put("enable.idempotence", true);	
+		-- Safer Producer summary demo.
+			-- Kafka <0.11
+				-- acks=all (producer level)
+						-- Ensures data is properly replicated before an acknowledgement is received.
+				-- min.insync.replicas=2 (broker/topic level)
+						-- Ensure two brokers in ISR at least have the data after an ack.
+				-- retries=MAX_INT (producer level)
+						-- Ensures transient errors are retried indefinitely.
+			    -- max.in.flight.requests.per.connection=1 (producer level)
+						-- Ensures only one request is tried at any time, preventing message re-ordering in case of retries.
+			-- Kafka >= 0.11
+				-- enable.idempotence=true (producer level) + min.insync.replicas=2 (broker/topic level)
+						-- implies acks=all, retries=MAX_INT, max.in.flight.requests.per.connection=5(default)
+						-- While keeping ordering guarantees and improving performance.
+			**Note: Running a "safe producer" might impact throughput and latency. Always test for your use case.
+			
+		-- Message Compression.
+			-- Producer usually sends data in text-based, for example JSON data.
+			-- In this case, it is important to apply compression to the producer.
+			-- Compression is enabled at Producer level and doesn't require any configuration change in the Brokers or in the Consumers.
+			-- "compression.type" can be "none" (default), "gzip", "Iz4", "snappy".
+			-- Compression is more effective the bigger the batch of message being sent to Kafka.
+			-- Consider testing snappy or lz4 for optimal speed/compression ratio.
+			-- snappy compression is developed by google.
+			-- gzip has a higher compression ratio but it is not very fast.
+			-- Always use compression in production and especially if you have high throughput.
+			-- Consider tweaking "linger.ms" and "batch.size" to have bigger batches, and therefore more compression and higher throughput.
+			-- Benchmark http://blog.cloudfare.com/squeezing-the-firehose/
+			-- 
+		-- Linger.ms and batch.size
+			-- By default, Kafka tries to send records as soon as possible
+				-- It will have up to 5 requests in flight, meaning up to 5 messages individually sent at the same time.
+				-- After this, if more messages have to be sent while others are in flight, Kafka is smart and will start.
+					batching them while they wait to send them all at once.
+			-- This smart batching allows Kafka to increase throughput while maintaining very low latency.
+			-- Batches have higher compression ratio so better efficiency
+			
+			-- Linger.ms: 
+				-- Number of milliseconds a producer is willing to wait before sending a batch out. (default 0)
+				-- By introducing some lag (for example linger.ms=5), we increase the chances of messages being sent together in a batch.
+				-- So at the expense of introducing a small delay, we can increase throughput, compression and efficiency of our producer.
+				-- If a batch is full (see batch.size) before the end of the linger.ms period, it will be sent to Kafka righ away.
+			-- batch.size 
+				-- Maximum number of bytes that will be included in a batch. The default is 16KB.
+				-- Increasing a batch size to something like 32KB or 64KB can help increasing the compression, throughput, and efficiency of requests.
+				-- Any message that is bigger than the batch size will not be batched.
+				-- A batch is allocated per partition, so make sure that you dont' set it to a number that's too high, otherwise you'll run waste memory.
+				-- Note: You can monitor the average batch size metric using Kafka Producer Metrics.
+					
+		-- Producer Default Partitioner and how keys are hashed.
+			-- By Default, your keys are hashed using the "murmur2" algorithm.
+			-- It is most likely preferred to not override the behavior of the partitioner, but it is possible to do so (partitioner.class)
+			-- The default formula is:
+				targetaPartition = Util.abs(Utils.murmur2(record.key())) % numPartitions;
+			-- This means that same key will go to the same partition (we already know this), and adding partitions to a topic will completely alter the formula.
+	
+	-- Max.block.ms & buffer.memory
+		-- If the producer produces faster than the broker can take, the records will be buffered in the memory.
+		-- buffer.memory=33554432 (32MB): the default size of the send buffer.
+		-- That buffer will fill up over time and fill back down when the throughput to the broker increases.
+		-- If the buffer is full (all 32 MB), then the .send() method will start to block (won't return right way).
+		-- max.block.ms=60000 :The time the .send() will block until throwing an exception. Exceptions are basically thrown when
+			-- The Producer has filled up its buffer.
+			-- The broker is not accepting any new data.
+			-- 60 seconds has elapsed.
+		-- If you hit an exception hit that usually means your brokers are down or overloaded as they can't respond to requests.
+		
+
+		
+			
+		$ kafka-console-producer --broker-list 127.0.0.1:9092 --topic new-topic  
+			-- $ kafka-topics --zookeeper 127.0.0.1:2181 --topic new_topic --describe
+			--Will create the topic if not already created with default 1 partition and default 1 replication factor.
+			--To change the default values edit config/server.properties
+				num.partitions=3 
+			--The above change will create 3 partitions by default.
+			
+	* Kafka Console Consumer		
+		$ kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic 
+			--Only the messages produced after consumer is created will be displayed.
+		$ kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic --from-beginning
+			--Will receive all the messages since beginning of the topic.
+		-- 
+	
+	* Kafka consumers in groups
+		$ kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic --group my-first-group
+		    --If we create multiple consumers (using exact same above command). That means N number of consumers 
+			  will be sharing the same group and reading the same topic. In such scenario, the read will be 
+			  load-balanced across N consumers sharing the same group name and reading the same topic.
+		
+		$ kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic --group my-second-group --from-beginning
+			--This will show all the data written to first_topic since beginning.
+			--stop above command and re-start above command. This time it will not show the data from beginning 
+			  because the offset for new group name has been committed in kafka. So it will only show the new messages.
+	
+		$ kafka-console-consumer --bootstrap-server 127.0.0.1:9092 --topic first_topic --group my-second-group
+			--Only show the pending read message.
+		
+	* Kafka Consumer Group.
+		$ kafka-consumer-groups --bootstrap-server localhost:9092 --list
+			--Lists the consumer group.
+		$ kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group my-second-group
+			--describes the group and shows the offsets with lag.
+		
+	* Resetting offsets.
+		$ kafka-consumer-groups --bootstrap-server localhost:9092 --group my-first-group --reset-offsets --to-earliest --execute --topic first_topic
+			--resets the offset to the beginning of the topic.
+		$ kafka-consumer-groups --bootstrap-server localhost:9092 --group my-first-group --reset-offsets --shift-by 2 --execute --topic first_topic
+			--shifts forward by 2 offsets.
+		$ kafka-consumer-groups --bootstrap-server localhost:9092 --group my-first-group --reset-offsets --shift-by -2 --execute --topic first_topic
+			--shifts backwart by 2 offsets. because the value is -2 (minus 2)
+		
+	* www.kafkatool.com
+		- download the package for Tool UI.
+
+
+
+https://www.linkedin.com/learning/learn-apache-kafka-for-beginners/kafka-connect-introduction?u=2201018
