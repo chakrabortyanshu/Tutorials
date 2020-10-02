@@ -55,7 +55,8 @@ Ctrl + Alt + V              : to extract a variable or field.
 Ctrl + Alt + M              : Extract Method
 Ctrl + Alt + C              : Select the Current selected expression into a constant.
 Ctrl + Alt + P              : Extract the selected expression into a parameter.
-Alt+Shift+C                 : To quickly review recent changes to the Project.
+Alt + Shift + C             : To quickly review recent changes to the Project.
+Alt + Shift + Insert        : multi cursor shortcuts intellij
 
 Code Assistance/Formatting:
 ---------------------------
