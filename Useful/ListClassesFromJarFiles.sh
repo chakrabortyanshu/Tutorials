@@ -7,8 +7,8 @@ for f in *.jar ;
 
         do
                 echo "***********************************************************************************" >> listingClasses.log
-                echo "JAR ES=$f" >> listingClasses.log
+                echo "JAR IS = $f" >> listingClasses.log
                 jar -tf "$f" >> listingClasses.log ;
         done
 
-echo "Finalized the List."
+echo "Completed."
