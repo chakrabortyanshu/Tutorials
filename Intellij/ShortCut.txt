@@ -38,6 +38,7 @@ Ctrl+]                      : Jump to the end of the tag/block of the code.
 Surround and unwrap
 -------------------
 Ctrl + Alt + T              : Surround the selected code fragment with source template code.
+CTRL + ALT + T              : Custom Code Folding with comment.
 Ctrl + Shift + Delete       : unsurrounds the selected code fragment.
 Ctrl + Shift + F7           : highlight all usage of the symbol at the caret within the file.
 
