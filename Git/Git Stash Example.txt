@@ -1,0 +1,25 @@
+
+C:>git stash -help
+usage: git stash list [<options>]
+   or: git stash show [<options>] [<stash>]
+   or: git stash drop [-q|--quiet] [<stash>]
+   or: git stash ( pop | apply ) [--index] [-q|--quiet] [<stash>]
+   or: git stash branch <branchname> [<stash>]
+   or: git stash clear
+   or: git stash [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+          [-u|--include-untracked] [-a|--all] [-m|--message <message>]
+          [--pathspec-from-file=<file> [--pathspec-file-nul]]
+          [--] [<pathspec>...]]
+   or: git stash save [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+          [-u|--include-untracked] [-a|--all] [<message>]
+
+
+STASH can be applied across multiple branches. That means you can save the stash in one branch and pop in another.
+
+git stash save "comment"
+git stash list      		--> provides you the list of stashes with <stash id>
+git stash apply <stash id>  --> git stash apply stash@{0}  will not clear the stash
+git stash pop             	--> this clears the stash and applies the latest stashed changes.
+git stash drop <stash id>   --> drops the id provided from the the stash.
+git stash clear             --> drop all the stashes.
+
