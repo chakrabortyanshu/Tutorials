@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="LibraryTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2016-07-13T03:57:06" hostname="DIN52003518" time="0.006">
+  <properties/>
+  <testcase name="testSomeLibraryMethod" classname="LibraryTest" time="0.005"/>
+  <testcase name="testSomeOtherLibraryMethod" classname="LibraryTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
