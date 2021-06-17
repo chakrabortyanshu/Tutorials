@@ -21,3 +21,7 @@ https://learn.liquibase.com/
 https://docs.liquibase.com/home.html
 https://www.liquibase.org/get-started/best-practices
 https://www.liquibase.org/get-started
+
+
+https://docs.liquibase.com/concepts/home.html
+https://docs.liquibase.com/concepts/advanced/preconditions.html
