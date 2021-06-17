@@ -72,7 +72,7 @@ public class TwitterProducer {
                 JSONObject jsonObj = new JSONObject(msg);
                 System.out.println(jsonObj.toString(4));
 
-                sendToKafkaTopicAsProducer(producer, msg);
+                sendToKafkaTopicAsProducer(producer, null, msg);
             }
         } catch (InterruptedException e) {
             logger.error("InterruptedException Occurred.", e);
@@ -85,12 +85,12 @@ public class TwitterProducer {
         }*/
     }
 
-    private void sendToKafkaTopicAsProducer(KafkaProducer<String, String> producer, String msg) {
+    private void sendToKafkaTopicAsProducer(KafkaProducer<String,String> producer, String key , String msg) {
         String kafkaTopic = "first_topic";
 
         logger.info("Sending message to Kafka as Producer to Topic " + kafkaTopic );
 
-        ProducerRecord<String, String> record = new ProducerRecord<>(kafkaTopic, null, msg);
+        ProducerRecord<String, String> record = new ProducerRecord<>(kafkaTopic,null, msg);
 
         //ASynchronous Callback.
         producer.send(record, this::onCompletion);
@@ -130,7 +130,10 @@ public class TwitterProducer {
         properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG,Integer.toString(32*1024)); //32KB
 
 
-        return new KafkaProducer<>(properties);
+
+        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
+
+        return producer;
     }
 
     private Client createTwitterClient(BlockingQueue<String> msgQueue, List<String> terms) {

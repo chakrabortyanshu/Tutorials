@@ -1,0 +1,21 @@
+Docker Desktop.
+
+* List of Containers
+    docker ps -a
+* START
+    docker start <container_name>
+* STOP
+    docker stop [-t 200] <container_name>
+* RESTART
+    docker restart <container_name>
+* REMOVE
+    docker rm -f <container_name>
+* CLI:
+    docker exec -it <container_name> /bin/sh
+    docker exec -it <container_name> /bin/bash
+* LOGS:
+    docker logs -f <container_name>
+* INSPECT:
+    docker inspect <container_name>
+* STATS:
+    docker stats <container_name>

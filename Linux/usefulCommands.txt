@@ -1,0 +1,57 @@
+updatedb
+
+    chmod
+    adduser john
+    cat /etc/passwd
+    cat /etc/shadow
+    su john  -> switch user to john
+    su root  -> switch user to root
+    sudo passwd root
+
+Common network commands:
+    ifconfig    : 
+    iwconfig
+    ping        : ping <ip address> -c 1     :- Send only one packet.
+    arp -a      : stands for Address Resolution Protocol, which is used to find the media access control address of a network neighbour for a given IPv4 Address.
+    netstat -ano      
+    route       
+
+editing files:
+    echo       : echo "hey" > hey.txt    echo "hey again "  >> hey.txt
+     cat
+    replacing vs appending (> vs >>)
+    touch
+    nano
+    gedit
+    vi
+    vim
+
+Starting and Stopping Services
+    service     : services apache2 start|stop
+    systemctl   : systemctl enable|disable ssh        :- to keep the service running whenever the system restarts.
+                  systemctl enable|disable postgresql
+
+    spin up a web service to share folders and files.
+        open terminal
+        go the the folder you want to share
+        python -m SimpleHTTPServer 80
+    
+Install Veil from Github
+
+Scripting with Bash
+    grep
+    cut
+    tr
+    script writing
+    for loops
+        
+
+    ping google.com -c 1 > ip.txt
+    cat ip.txt
+    cat ip.txt | grep "64 bytes"
+    cat ip.txt | grep "64 bytes" | cut -d " " -f 4
+    cat ip.txt | grep "64 bytes" | cut -d " " -f 4 | tr -d ":"
+    
+    
+Youtube Channel "The Cyber Mentor"    
+

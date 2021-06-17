@@ -1,0 +1,93 @@
+add additional IPs to simulate ATMs
+-----------------------------------
+set interface interface="VirtualBox Host-Only Network" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+
+FOR /L %A IN (1,1,20) DO netsh interface ipv4 add address "VMware Network Adapter VMnet1" 192.168.1.%A 255.255.255.0
+
+
+netsh interface ipv4 show config
+
+
+netsh interface ipv4 show address
+
+
+
+===========================================================================================================================================
+netsh interface ipv4 show config "VirtualBox Host-Only Network"
+FOR /L %A IN (10,1,30) DO netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.%A 255.255.255.0
+FOR /L %A IN (11,1,30) DO netsh interface ipv4 delete address "VirtualBox Host-Only Network" 192.168.56.%A 255.255.255.0
+
+
+C:\Users\ac185300>FOR /L %A IN (10,1,20) DO netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.1.%A 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.10 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.11 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.12 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.13 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.14 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.15 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.16 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.17 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.18 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.19 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.20 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.21 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.22 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.23 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.24 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.25 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.26 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.27 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.28 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.29 255.255.255.0
+	C:\Users\ac185300>netsh interface ipv4 add address "VirtualBox Host-Only Network" 192.168.56.30 255.255.255.0
+	
+	
+netsh
+interface
+ipv4
+show config
+delete address "VirtualBox Host-Only Network" 192.168.1.10
+
+
+
+show config
+	
+	
+===========================================================================================================================================	
+
+C:\windows\system32>netsh interface ipv4 dump
+
+
+# ----------------------------------
+# IPv4 Configuration
+# ----------------------------------
+pushd interface ipv4
+
+reset
+set global
+add route prefix=0.0.0.0/0 interface="Citrix Virtual Adapter" nexthop=10.0.0.1 metric=1 publish=Yes
+set interface interface="Ethernet (Kernel Debugger)" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Wi-Fi" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Local Area Connection* 1" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Local Area Connection* 2" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Ethernet" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Local Area Connection* 12" forwarding=enabled advertise=enabled metric=0 nud=enabled ignoredefaultroutes=disabled
+set interface interface="Local Area Connection* 13" forwarding=enabled advertise=enabled metric=0 nud=enabled ignoredefaultroutes=disabled
+set interface interface="VirtualBox Host-Only Network" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Citrix Virtual Adapter" forwarding=disabled advertise=enabled nud=enabled weakhostsend=disabled weakhostreceive=disabled ignoredefaultroutes=disabled
+set interface interface="Ethernet 2" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Bluetooth Network Connection" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="vEthernet (Default Switch)" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+add address name="Local Area Connection* 12" address=135.106.198.217 mask=255.255.255.255
+add address name="Citrix Virtual Adapter" address=10.18.105.10 mask=255.255.255.192
+add address name="Local Area Connection* 13" address=135.106.198.217 mask=255.255.255.255
+add address name="vEthernet (Default Switch)" address=172.17.171.81 mask=255.255.255.240
+add neighbor interface="Citrix Virtual Adapter" address=10.0.0.1 neighbor="00-50-cc-dd-ff-aa"
+
+
+popd
+# End of IPv4 configuration
+
+
+
+C:\windows\system32>

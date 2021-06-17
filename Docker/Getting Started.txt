@@ -1,0 +1,283 @@
+docker start <docker_id>   : if it is an existing docker container that was downloaded earlier.
+docker container run --rm -tip 3000:3000 mikesir8/my-first-node-image-dc19     : if it is a new installation.
+docker run -d -p 80:80 docker/getting-started
+docker run -dp 80:80 docker/getting-started
+
+
+
+$ vi dockerFile
+	FROM node:12-alpine
+	WORKDIR /app
+	COPY . .
+	RUN yarn install --production
+	CMD ["node", "/app/src/index.js"]
+
+
+$ docker build -t getting-started .
+$ docker run -dp 3000:3000 getting-started
+$ docker ps -a
+$ docker stop getting-started
+$ docker rm getting-started
+$ docker rm -f getting-started     - stops and removes a container. -f is a "force" flag to the docker rm command.
+
+	Keep repeating above commands if you need to modify your program and build new images. right from build all the way till rm -f. 
+
+To Create a Repo to share:-
+	* Go to https://hub.docker.com/ and login.
+	* Click the Create Repository button.
+	* For the repo name, use getting-started. Make sure the Visibility is Public.
+	* Click the Create button!
+	* If you look on the right-side of the page, you'll see a section named Docker commands. This gives an example command that you will need to run to push to this repo.
+		docker push YOUR-USER-NAME/getting-started:tagname
+To rename tag use
+    * docker image ls	
+	* docker tag getting-started YOUR-USER-NAME/getting-started
+	* docker push YOUR-USER-NAME/getting-started:tagname       - If you don't specify a tag, Docker will use a tag called latest.
+
+Running our Image on a New Instance
+	Now that our image has been built and pushed into a registry, let's try running our app on a brand new instance that has never 
+	seen this container image! To do this, we will use Play with Docker.
+
+	* Open your browser to http://play-with-docker.com/.
+	* Log in with your Docker Hub account.
+	* Once you're logged in, click on the "+ ADD NEW INSTANCE" link in the left side bar. 
+	  After a few seconds, a terminal window will be opened in your browser.
+	* In the terminal, start your freshly pushed app.
+			docker run -dp 3000:3000 YOUR-USER-NAME/getting-started
+	  You should see the image get pulled down and eventually start up!
+	* Click on the 3000 badge when it comes up and you should see the app with your modifications! 
+	  Hooray! If the 3000 badge doesn't show up, you can click on the "Open Port" button and type in 3000.
+
+Persisting our DB
+	* docker run -d ubuntu bash -c "shuf -i 1-10000 -n 1 -o /data.txt && tail -f /dev/null"
+		we're starting a bash shell and invoking two commands. The first portion picks a single random number 
+		and writes it to /data.txt. The second command is simply watching a file to keep the container running.
+	* docker ps    - to get the container id of Ubuntu.
+	* docker exec <container-id> cat /data.txt      You should see a random number!
+	* docker run -it ubuntu ls /
+		Now, let's start another ubuntu container (the same image) and we'll see we don't have the same file.
+		There's no data.txt file! That's because it was written to the scratch space for only the first container.
+		
+	* To remove the running container use command
+		docker rm -f <container-id>
+		
+	* Volume (https://docs.docker.com/storage/volumes/) provide the ability to connect specific filesystem paths 
+		of the container back to the host machine. If a directory in the container is mounted, changes in that 
+		directory are also seen on the host machine. If we mount that same directory across container restarts, 
+		we'd see the same files.
+		
+	* Pro-tip : While named volumes and bind mounts (which we'll talk about in a minute) are the two main types 
+				of volumes supported by a default Docker engine installation, there are many volume driver plugins 
+				available to support NFS, SFTP, NetApp, and more! This will be especially important once you start 
+				running containers on multiple hosts in a clustered environment with Swarm, Kubernetes, etc.
+				
+	* There are two main types of volumes.
+		* Named Volume: Think of a named volume as simply a bucket of data. Docker maintains the physical location 
+						on the disk and you only need to remember the name of the volume. Every time you use the 
+						volume, Docker will make sure the correct data is provided.
+						* Create a volume by using the docker volume create command.
+						
+							docker volume create todo-db
+							
+						* If you want to know, you can use the docker volume inspect command. The Mountpoint is the actual location on the disk where the data is stored
+							
+							docker volume inspect todo-db
+							
+							OUTPUT:-
+								docker volume inspect todo-db
+								[
+									{
+										"CreatedAt": "2019-09-26T02:18:36Z",
+										"Driver": "local",
+										"Labels": {},
+										"Mountpoint": "/var/lib/docker/volumes/todo-db/_data",
+										"Name": "todo-db",
+										"Options": {},
+										"Scope": "local"
+									}
+								]
+							
+						* Start the todo container, but add the -v flag to specify a volume mount. We will use the 
+						  named volume and mount it to /etc/todos, which will capture all files created at the path.
+						  
+							docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started
+		
+		* Bind Mounts: With bind mounts, we control the exact mountpoint on the host. We can use this to persist data, 
+					   but is often used to provide additional data into containers. When working on an application, we 
+					   can use a bind mount to mount our source code into the container to let it see code changes, 
+					   respond, and let us see the changes right away.
+					   For Node-based applications, nodemon (https://npmjs.com/package/nodemon) is a great tool to watch 
+					   for file changes and then restart the application.
+					   
+					   * Run the following command. We'll explain what's going on afterwards:
+
+								docker run -dp 3000:3000 \
+									-w /app -v ${PWD}:/app \
+									node:12-alpine \
+									sh -c "yarn install && yarn run dev"
+									
+						        * -dp 3000:3000 - same as before. Run in detached (background) mode and create a port mapping
+								* -w /app - sets the "working directory" or the current directory that the command will run from
+								* node:12-alpine - the image to use. Note that this is the base image for our app from the Dockerfile
+								* sh -c "yarn install && yarn run dev" - the command. We're starting a shell using sh (alpine doesn't have bash) 
+								  and running yarn install to install all dependencies and then running yarn run dev. If we look in the package.json, 
+								  we'll see that the dev script is starting nodemon.
+						
+					* Using bind mounts is very common for local development setups. The advantage is that the dev machine doesn't 
+					  need to have all of the build tools and environments installed. With a single docker run command, the dev 
+					  environment is pulled and ready to go.
+	
+		* You can watch the logs using 
+			$ docker logs -f <container-id>
+	
+	
+	* Multi-Container Apps:
+		* If two containers are on the same network, they can talk to each other. If they aren't, they can't.
+		* Starting MYSQL: There are two ways to put a container on a network: 
+			1) Assign it at start or 
+			2) connect an existing container. 
+			For now, we will create the network first and attach the MySQL container at startup.
+			
+			* Create the network.
+				$ docker network create todo-app
+				
+			* Start a MySQL container and attach it the network. We're also going to define a few environment variables that the 
+			  database will use to initialize the database (see the "Environment Variables" section in the MySQL Docker Hub 
+			  listing (https://hub.docker.com/_/mysql/) ).
+			    
+				$ docker run -d \
+					--network todo-app --network-alias mysql \
+					-v todo-mysql-data:/var/lib/mysql \
+					-e MYSQL_ROOT_PASSWORD=secret \
+					-e MYSQL_DATABASE=todos \
+					mysql:5.7
+					
+			* Pro-tip : You'll notice we're using a volume named todo-mysql-data here and mounting it at /var/lib/mysql, which is where 
+						MySQL stores its data. However, we never ran a docker volume create command. Docker recognizes we want to use a 
+						named volume and creates one automatically for us.
+			* To confirm we have the database up and running, connect to the database and verify it connects.
+				
+				$ docker exec -it <mysql-container-id> mysql -p
+				
+			      When the password prompt comes up, type in secret. In the MySQL shell, list the databases and verify you see the todos database.
+				  mysql> SHOW DATABASES;
+			
+			* Connecting to MySQL : Now that we know MySQL is up and running, let's use it! But, the question is... how? If we run another container 
+									on the same network, how do we find the container (remember each container has its own IP address)?
+									To figure it out, we're going to make use of the nicolaka/netshoot (https://github.com/nicolaka/netshoot) container, 
+									which ships with a lot of tools that are useful for troubleshooting or debugging networking issues.
+							
+					* Start a new container using the nicolaka/netshoot image. Make sure to connect it to the same network.
+							$ docker run -it --network todo-app nicolaka/netshoot
+							
+					* Inside the container, we're going to use the dig command, which is a useful DNS tool. We're going to look up the IP address for 
+					  the hostname "mysql".
+							$ dig mysql
+							
+							You will see an A record for mysql that resolves to IP Address. While "mysql" isn't normally a valid hostname, Docker was 
+							able to resolve it to the IP address of the container that had that network alias (remember the --network-alias flag we used earlier?).
+
+							What this means is... our app only simply needs to connect to a host named "mysql" and it'll talk to the database! 
+							It doesn't get much simpler than that!		
+
+			* Running our App with MySQL
+				The todo app supports the setting of a few environment variables to specify MySQL connection settings. They are:
+
+				* MYSQL_HOST - the hostname for the running MySQL server
+				* MYSQL_USER - the username to use for the connection
+				* MYSQL_PASSWORD - the password to use for the connection
+				* MYSQL_DB - the database to use once connected
+				
+			* WARNING: While using env vars to set connection settings is generally ok for development, it is HIGHLY DISCOURAGED when running 
+			           applications in production. Diogo Monica, the former lead of security at Docker, wrote a fantastic blog
+					   (https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/) post explaining why.
+						
+						A more secure mechanism is to use the secret support provided by your container orchestration framework. In most cases, 
+						these secrets are mounted as files in the running container. You'll see many apps (including the MySQL image and the 
+						todo app) also support env vars with a _FILE suffix to point to a file containing the file.
+
+						As an example, setting the MYSQL_PASSWORD_FILE var will cause the app to use the contents of the referenced file as the connection 
+						password. Docker doesn't do anything to support these env vars. Your app will need to know to look for the variable and get the file contents.
+			* With all of that explained, let's start our dev-ready container!
+			    * We'll specify each of the environment variables above, as well as connect the container to our app network.
+
+					  $ docker run -dp 3000:3000 \
+						  -w /app -v ${PWD}:/app \
+						  --network todo-app \
+						  -e MYSQL_HOST=mysql \
+						  -e MYSQL_USER=root \
+						  -e MYSQL_PASSWORD=secret \
+						  -e MYSQL_DB=todos \
+						  node:12-alpine \
+						  sh -c "yarn install && yarn run dev"
+				
+				* If we look at the logs for the container (docker logs <container-id>), we should see a message indicating it's using the mysql database.
+
+						$ nodemon src/index.js
+						[nodemon] 1.19.2
+						[nodemon] to restart at any time, enter `rs`
+						[nodemon] watching dir(s): *.*
+						[nodemon] starting `node src/index.js`
+						Connected to mysql db at host mysql
+						Listening on port 3000
+				* Open the app in your browser and add a few items to your todo list.
+				* Connect to the mysql database and prove that the items are being written to the database. Remember, the password is secret.
+
+					$ docker exec -ti <mysql-container-id> mysql -p todos
+						And in the mysql shell, run the following:
+					mysql> select * from todo_items;
+							
+* Using Docker Compose: 
+		Docker Compose (https://docs.docker.com/compose/) is a tool that was developed to help define and share multi-container applications. 
+					
+	
+* How to copy Docker images from one host to another without using a repository. You will need to save the Docker image as a tar file:
+
+		docker save -o <path for generated tar file> <image name>
+		ex: docker save -o /home/matrix/matrix-data.tar matrix-data
+			docker save -o c:/myfile.tar centos:16
+
+        Then copy your image to a new system with regular file transfer tools such as cp, scp or rsync(preferred for big files). 
+		After that you will have to load the image into Docker:
+
+		docker load -i <path to image tar file>
+		ex: sudo docker load -i <path to copied image file>
+
+		PS: You may need to sudo all commands.
+
+* Shows Docker Disk Usage
+		docker system df
+
+* Remove Docker images
+		docker image rm -f cassandra
+
+
+	
+	
+Useful Links:
+		https://www.youtube.com/watch?v=1BI2W-PGkKw
+		https://www.docker.com/
+		https://labs.play-with-docker.com/
+		https://www.docker.com/play-with-docker
+		https://www.docker.com/blog/
+		https://www.docker.com/get-started
+		https://www.docker.com/docker-community
+		https://www.docker.com/blog/
+		https://www.docker.com/resources
+		https://docs.docker.com/compose/
+		https://docs.docker.com/get-started/resources/
+		https://docs.docker.com/storage/volumes/
+		https://docs.docker.com/docker-for-windows/
+		https://goto.docker.com/rs/929-FJL-178/images/20150731-wp_docker-3-ways-devops.pdf
+		https://www.youtube.com/user/dockerrun
+		https://youtu.be/8fi7uSYlOdc
+		https://medium.com/@saschagrunert/demystifying-containers-part-i-kernel-space-2c53d6979504
+		https://www.sqlite.org/index.html
+		https://github.com/chakrabortyanshu/Docker/blob/master/README.md
+		https://training.play-with-docker.com/
+		
+Other Links:		
+		http://www.javapractices.com/home/HomeAction.do
+		http://javaperformancetuning.com/
+		com.google.common.base.Preconditions.checkNotNull
+		

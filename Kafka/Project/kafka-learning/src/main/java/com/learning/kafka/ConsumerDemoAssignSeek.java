@@ -40,9 +40,9 @@ public class ConsumerDemoAssignSeek {
      * @param consumer KafkaConsumer map
      */
     private void readConsumerRecords(KafkaConsumer<String, String> consumer) {
-        int numberOfMegsToRead = 5;
+        int numberOfMsgsToRead = 5;
         boolean keepOnreading = true;
-        int numberOfMsgReadSoFar = 0;
+        int numberOfMsgsReadSoFar = 0;
         //poll for new data
         try {
             while (keepOnreading) {
@@ -50,11 +50,11 @@ public class ConsumerDemoAssignSeek {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
                 for (ConsumerRecord<String, String> record : records) {
-                    numberOfMsgReadSoFar += 1;
+                    numberOfMsgsReadSoFar += 1;
                     logger.info("Key: " + record.key() + ", Value: " + record.value());
                     logger.info("Partition: " + record.partition() + ", Offsets: " + record.offset());
 
-                    if (numberOfMsgReadSoFar >= numberOfMegsToRead) {
+                    if (numberOfMsgsReadSoFar >= numberOfMsgsToRead) {
                         keepOnreading = false;
                         break;
                     }

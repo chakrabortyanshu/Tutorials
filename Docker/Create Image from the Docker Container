@@ -1,0 +1,10 @@
+How to create images from the docker container:
+------------------------------------------------
+docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+docker commit -m"creating image from the container" sonarqube_admin_adminadmin chakrabortyanshu/sonarqube_admin_adminadmin:20210222
+
+OTHER EXAMPLE:
+docker commit nginx_base                                   # will create image entry without name or tag.
+docker images                                              # to see the image created in the first step without the tag and name.
+docker tag <image_id without tag> hi_mom_nginx:latest      # for tagging the untagged image.
+docker commit nginx_base hi_mom_nginx                      # tag the image as it is created by adding another argument to the end of the command

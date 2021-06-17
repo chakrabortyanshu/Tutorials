@@ -1,0 +1,7 @@
+
+git clone https://github.com/docker/doodle.git
+cd doodle\cheers2019
+docker build -t chakrabortyanshu/cheers2019 .
+docker run -it --rm chakrabortyanshu/cheers2019
+docker login
+docker push chakrabortyanshu/cheers2019:learning
