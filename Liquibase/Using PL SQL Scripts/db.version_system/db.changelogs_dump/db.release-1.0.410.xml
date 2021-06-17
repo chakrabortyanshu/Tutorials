@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+        <changeSet id="DEV-RELEASE-410" author="author">
+                <tagDatabase tag="db.release-1.0.410"/>
+        </changeSet>
+
+        <changeSet id="abcd-894" author="author">
+
+                <sqlFile dbms="oracle"
+                        path="../../../../abcd-package/src/db/abcd/abcd-894/01_UPDATE_RECEIPTS_CONFIGURATION.sql"
+                        relativeToChangelogFile="true"
+                        endDelimiter="\n/\s*\n|\n/\s*$"
+                        splitStatements="true"
+                        stripComments="true"/>
+
+
+                <sqlFile dbms="oracle"
+                        path="../../../../abcd-package/src/db/abcd/abcd-894/02_UPDATE_SCREENS_CONFIGURATION.sql"
+                        relativeToChangelogFile="true"
+                        endDelimiter="\n/\s*\n|\n/\s*$"
+                        splitStatements="true"
+                        stripComments="true"/>
+
+
+                <sqlFile dbms="oracle"
+                        path="../../../../abcd-package/src/db/abcd/abcd-894/03_UPDATE_SCREENS_CONFIGURATION.sql"
+                        relativeToChangelogFile="true"
+                        endDelimiter="\n/\s*\n|\n/\s*$"
+                        splitStatements="true"
+                        stripComments="true"/>
+
+
+                <sqlFile dbms="oracle"
+                        path="../../../../abcd-package/src/db/abcd/abcd-894/04_UPDATE_SCREENS_CONFIGURATION.sql"
+                        relativeToChangelogFile="true"
+                        endDelimiter="\n/\s*\n|\n/\s*$"
+                        splitStatements="true"
+                        stripComments="true"/>
+
+                <rollback>
+
+                        <sqlFile dbms="oracle"
+                                path="../../../../abcd-package/src/db/abcd/abcd-894/Rollback/RB_01_UPDATE_RECEIPTS_CONFIGURATION.sql"
+                                relativeToChangelogFile="true"
+                                endDelimiter="\n/\s*\n|\n/\s*$"
+                                splitStatements="true"
+                                stripComments="true"/>
+
+
+                        <sqlFile dbms="oracle"
+                                path="../../../../abcd-package/src/db/abcd/abcd-894/Rollback/RB_02_UPDATE_SCREENS_CONFIGURATION.sql"
+                                relativeToChangelogFile="true"
+                                endDelimiter="\n/\s*\n|\n/\s*$"
+                                splitStatements="true"
+                                stripComments="true"/>
+
+
+                        <sqlFile dbms="oracle"
+                                path="../../../../abcd-package/src/db/abcd/abcd-894/Rollback/RB_03_UPDATE_SCREENS_CONFIGURATION.sql"
+                                relativeToChangelogFile="true"
+                                endDelimiter="\n/\s*\n|\n/\s*$"
+                                splitStatements="true"
+                                stripComments="true"/>
+
+
+                        <sqlFile dbms="oracle"
+                                path="../../../../abcd-package/src/db/abcd/abcd-894/Rollback/RB_04_UPDATE_SCREENS_CONFIGURATION.sql"
+                                relativeToChangelogFile="true"
+                                endDelimiter="\n/\s*\n|\n/\s*$"
+                                splitStatements="true"
+                                stripComments="true"/>
+
+                </rollback>
+        </changeSet>
+
+</databaseChangeLog>

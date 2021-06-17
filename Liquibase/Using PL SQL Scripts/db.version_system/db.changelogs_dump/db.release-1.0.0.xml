@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+	http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="DB-DUMP-20190320" author="author">
+		<tagDatabase tag="db.release-1.0.0"/>
+	</changeSet>
+
+	<changeSet id="jiraId" author="author">
+		<sqlFile dbms="oracle"
+            encoding="utf8"
+            path="../../../../abcd-package/src/db/abcd/abcd-655/01_CREATE.sql"
+            relativeToChangelogFile="true"
+            splitStatements="true"
+            stripComments="true"/>
+
+		<rollback>
+			<sqlFile dbms="oracle"
+				encoding="utf8"
+				path="../../../../abcd-package/src/db/abcd/abcd-655/Rollback/RB_01_CREATE.sql"
+				relativeToChangelogFile="true"
+				splitStatements="true"
+				stripComments="true"/>
+
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
