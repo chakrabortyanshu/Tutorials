@@ -1,0 +1,24 @@
+
+https://maven.apache.org/plugins/maven-install-plugin/usage.html#The_install:install-file_goal
+
+
+
+mvn install:install-file -Dfile=your-artifact-1.0.jar \
+                         [-DpomFile=your-pom.xml] \
+                         [-Dsources=src.jar] \
+                         [-Djavadoc=apidocs.jar] \
+                         [-DgroupId=org.some.group] \
+                         [-DartifactId=your-artifact] \
+                         [-Dversion=1.0] \
+                         [-Dpackaging=jar] \
+                         [-Dclassifier=sources] \
+                         [-DgeneratePom=true] \
+                         [-DcreateChecksum=true]
+						 
+------------------------------------------------------------------------------------------						 						 
+call mvn install::install-file -Dfile=AW1151001_Authentic_ATM_R1_1.0.0_20210714.jar 
+							   -DgroupId=moneta.bancol.AW1151001_Authentic_ATM  
+							   -DartifactId=AW1151001_Authentic_ATM  
+							   -Dversion=20210714 
+							   -Dpackaging=jar
+------------------------------------------------------------------------------------------
