@@ -16,9 +16,9 @@ mvn install:install-file -Dfile=your-artifact-1.0.jar \
                          [-DcreateChecksum=true]
 						 
 ------------------------------------------------------------------------------------------						 						 
-call mvn install::install-file -Dfile=AW1151001_Authentic_ATM_R1_1.0.0_20210714.jar 
-							   -DgroupId=moneta.bancol.AW1151001_Authentic_ATM  
-							   -DartifactId=AW1151001_Authentic_ATM  
+call mvn install::install-file -Dfile=Project_Name_R1_1.0.0_20210714.jar 
+							   -DgroupId=abcd.efgh.Project_Name  
+							   -DartifactId=Project_Name  
 							   -Dversion=20210714 
 							   -Dpackaging=jar
 ------------------------------------------------------------------------------------------
