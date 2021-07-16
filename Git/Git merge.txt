@@ -96,7 +96,7 @@ git config
 git config -l
 git config --local -l
 git config --local user.name 'achakrab'
-git config --local user.email 'achakrab@bancolombia.com.co'
+git config --local user.email 'achakrab@abcd.com.co'
 git config --local -l
 
 
@@ -110,7 +110,7 @@ git fetch --all
 Commit correction
 -----------------------------------------------------------------
 git commit --amend -m ""BCISSLOGNEW-1318: Initial checkin"
-git commit --amend --author="achakrab <achakrab@bancolombia.com.co>" --no-edit
+git commit --amend --author="achakrab <achakrab@abcd.com.co>" --no-edit
 
 
 
