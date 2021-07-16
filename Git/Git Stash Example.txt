@@ -17,16 +17,9 @@ usage: git stash list [<options>]
 STASH can be applied across multiple branches. That means you can save the stash in one branch and pop in another.
 
 git stash save "comment"
-git stash list      		    --> provides you the list of stashes with <stash id>
+git stash list      		--> provides you the list of stashes with <stash id>
 git stash apply <stash id>  --> git stash apply stash@{0}  will not clear the stash
-git stash pop             	 --> this clears the stash and applies the latest stashed changes.
+git stash pop             	--> this clears the stash and applies the latest stashed changes.
 git stash drop <stash id>   --> drops the id provided from the the stash.
 git stash clear             --> drop all the stashes.
 
-
-Show the list of changes:-
-git stash show 0		       --> Show list of changed files.
-git stash show -p 0         --> Show patched file content.
-
-Create a branch from the stash changes:-
-git stash branch <new branch> 0

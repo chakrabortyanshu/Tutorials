@@ -1,0 +1,120 @@
+
+- Follow a file change history:
+	git log --follow src\main\java\com\authentic\atm\action\ATMReversalAction.java
+
+- Find the difference between two change commits for a file:
+	git diff 10086613fa759e5e7b840 head src\main\java\com\authentic\atm\action\ATMReversalAction.java
+
+- Open the commit history file in the difftool:
+	git difftool 10086613fa759e5e7b840 head src\main\java\com\authentic\atm\action\ATMReversalAction.java
+	Git offers a range of difftools pre-configured "out-of-the-box" (kdiff3, kompare, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, diffuse, opendiff, p4merge and araxis), and also allows you to specify your own. To use one of the pre-configured difftools (for example, "vimdiff"), you add the following lines to your ~/.gitconfig:
+
+	[diff]
+		tool = vimdiff
+
+
+  trunk:
+	- git svn clone http://svnred.ncr.com/svn/repos/ps/alr/authentic-projects/cla/active/bcol/trunk
+  DEV:
+	- git svn clone http://svnred.ncr.com/svn/repos/ps/alr/authentic-projects/cla/active/bcol/branches/BANCOL_4_2_04_Drop4
+  QA:
+	- git svn clone http://svnred.ncr.com/svn/repos/ps/alr/authentic-projects/cla/active/bcol/branches/BANCOL_4_2_04_Drop4-QA/
+  UAT:
+	- git svn clone http://svnred.ncr.com/svn/repos/ps/alr/authentic-projects/cla/active/bcol/branches/BANCOL_4_2_04_Drop4-UAT/BANCOL_4_2_04_Drop4/
+
+
+
+
+
+
+GIT MERGE CONFLICT RESOLUTION
+------------------------------
+	1. git checkout <your temporary branch>   ex: git checkout feature/reversals
+ ***2. git merge <the branch where you want to merge your code later after conflict resolution>   ex: git merge develop_alterno
+	3. git mergetool --tool=winmerge 
+	   git mergetool  [go to mergetool section for configuring the mergetool]                     ex: git mergetool --tool=winmerge
+	4. after merging the changes once you are confident see the changes using command git status
+	5. if necessary use git add <file names to add>
+	6. git commit -m"resolving conflicts with develop_alterno"
+	7. initiate a git pull request to develop_alterno.
+
+
+SHOW DIFF:
+	git diff COMMIT~ COMMIT
+	git show COMMIT
+	git show COMMIT --name-only
+	git log --name-only
+	git log --name-only --oneline
+	git diff --stat
+	git diff --numstat
+	git diff --name-only
+
+
+
+Configuring MERGE TOOL:
+------------------------
+	https://ibeblog.com/2014/03/14/winmerge-as-mergetool-with-github-for-windows/
+	https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/resolving-a-merge-conflict-using-the-command-line
+	
+	
+	WinMerge is a great free tool for merging conflicts when working with a version control system like Git or Subversion. To use it with Git(Hub) follow the following steps:
+
+    Locate your .gitconfig file. If you’re using GitHub for Windows, you will certainly find it in your user folder.
+    Add the following text at the bottom of the file:
+    [diff]
+    	tool = winmerge
+    [mergetool "winmerge"]
+    	cmd = \"C:\\Program Files (x86)\\WinMerge\\WinMergeU.exe\" \"$MERGED\"
+    1
+    2
+    3
+    4
+    	
+    [diff]
+    	tool = winmerge
+    [mergetool "winmerge"]
+    	cmd = \"C:\\Program Files (x86)\\WinMerge\\WinMergeU.exe\" \"$MERGED\"
+
+    If you’re still using a 32-bit version of Windows, Replace “Program Files (x86)” with “Program Files”.
+    To merge a conflict, open a shell and browse to your repository’s root folder.
+    Use the command git mergetool to merge the conflicts with WinMerge.
+    If WinMerge doesn’t open, Git might still be trying to use a different tool, try again with git mergetool --tool=winmerge.
+
+
+
+This message is displayed because 'merge.tool' is not configured.
+See 'git mergetool --tool-help' or 'git help config' for more details.
+'git mergetool' will now attempt to use one of the following tools:
+
+git mergetool --tool=winmerge
+
+
+
+GIT CONFIG
+-----------------------------------------------------------------
+git config
+git config -l
+git config --local -l
+git config --local user.name 'achakrab'
+git config --local user.email 'achakrab@bancolombia.com.co'
+git config --local -l
+
+
+GIT FETCH
+-----------------------------------------------------------------
+git fetch --all
+
+
+
+
+Commit correction
+-----------------------------------------------------------------
+git commit --amend -m ""BCISSLOGNEW-1318: Initial checkin"
+git commit --amend --author="achakrab <achakrab@bancolombia.com.co>" --no-edit
+
+
+
+Diff with only file names
+-----------------------------------------------------------------
+Difference between existing branch and the other branch named 4_2_04_dev. It only shows the files.
+git diff --name-status 4_2_04_dev

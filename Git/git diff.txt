@@ -1,0 +1,27 @@
+https://stackoverflow.com/questions/22575662/filename-too-long-in-git-for-windows
+https://www.google.com/search?q=Windows+Filename+too+long+patch&rlz=1C1GCEU_enUS951US951&oq=Windows+Filename+too+long+patch+&aqs=chrome..69i57j33i160l2.7087j0j7&sourceid=chrome&ie=UTF-8
+
+HSM model.
+
+
+git diff mybranch/myfile.cs master/myfile.cs
+git diff 4_2_04_qa:bcol/bcol-extension/src/main/java/com/authentic/atm/conversation/state/CashWithdrawalError.java master:bcol/bcol-extension/src/main/java/com/authentic/atm/conversation/state/CashWithdrawalError.java
+
+git difftool master:bcol/bcol-extension/src/main/java/com/authentic/atm/conversation/state/CashWithdrawalError.java 4_2_04_qa:bcol/bcol-extension/src/main/java/com/authentic/atm/conversation/state/CashWithdrawalError.java
+
+"C:\Program Files\WinMerge\WinMergeU.exe"
+C:\Program Files\WinMerge\WinMergeU.exe
+
+If Winmerge is in your %PATH%, a git config merge.tool winmerge is all you need to do!
+(It works for diff tool too: git config diff.tool winmerge)
+
+
+git difftool -y bcol/bcol-extension/src/main/java/com/authentic/atm/conversation/state/CashWithdrawalError.java master 4_2_04_qa
+git difftool -y feature/db-696 develop -- user.sql
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<schedule locale="en,GB" type="Daily">
+<start at="22:00:00 COT" from="12 April 2021" to="31 December 2121"/>
+<daily include="all"/>
+</schedule>
