@@ -9,6 +9,7 @@ https://www.rootusers.com/enable-ssh-linux-mint/
 ```
 ## Now connect from the remote
 ```
+Using Putty or MobaXterm
 Type: SSH
 Host: <ip address of the server>
 User: <username of the server>
